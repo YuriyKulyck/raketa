@@ -74,62 +74,71 @@ class Enemy:
 
 
 
-pygame.init()
+def game():
+    pygame.init()
+    def win_window(window):
+       fps = pygame.time.Clock()
+       win_lbl = pygame.font.Font(None, 48).render('Ти Переміг',  True)
 
-window = pygame.display.set_mode([700, 500])
+    pygame.init()
 
-background = pygame.image.load("galaxy.jpg")
-background = pygame.transform.scale(background, window.get_size())
-fps = pygame.time.Clock()
+    window = pygame.display.set_mode([700, 500])
 
-#cтворити обєкт ракети
-player = Rocket("rocket.png",65, 85, 250, 400, 5)
+    background = pygame.image.load("galaxy.jpg")
+    background = pygame.transform.scale(background, window.get_size())
+    fps = pygame.time.Clock()
+
+    #cтворити обєкт ракети
+    player = Rocket("rocket.png",65, 85, 250, 400, 5)
 
 
-enemies = []
-y = 200
-for i in range(10):
-    enemies.append(Enemy("нннкк.jpg", 50, 50, random.randint(0, 650), y, 5))
-    y -= 100
+    enemies = []
+    y = 200
+    for i in range(10):
+        enemies.append(Enemy("нннкк.jpg", 50, 50, random.randint(0, 650), y, 5))
+        y -= 100
 
-score = 0
-score_lbl = pygame.font.Font(None, 23).render("Score: " + str(score), True, [0,0,0])
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+    data =  read_from_file()
+    score = data["score"]
+    win_in_file(data)
+    score = 0
+    score_lbl = pygame.font.Font(None, 23).render("Score: " + str(score), True, [0,0,0])
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    return
 
-    score_lbl = pygame.font.Font(None, 23).render("Score: " + str(score), True, [255, 0, 0])
-    #викликати метод, який дозволяє рухатись ракеті
-    for e in enemies:
-        e.move()
-        if e.hitbox.y > 500:
-            e.hitbox.y = -100
-            e.hitbox.x = random.randint(0, 650)
-
-    for e in enemies:
-        for b in player.bullets:
-            if e.hitbox.colliderect(b.hitbox):
-                b.hitbox.x = 5000
-                player.bullets.remove(b)
+        score_lbl = pygame.font.Font(None, 23).render("Score: " + str(score), True, [255, 0, 0])
+        #викликати метод, який дозволяє рухатись ракеті
+        for e in enemies:
+            e.move()
+            if e.hitbox.y > 500:
                 e.hitbox.y = -100
                 e.hitbox.x = random.randint(0, 650)
-                score += 1
-                break
 
-    player.move()
+        for e in enemies:
+            for b in player.bullets:
+                if e.hitbox.colliderect(b.hitbox):
+                    b.hitbox.x = 5000
+                    player.bullets.remove(b)
+                    e.hitbox.y = -100
+                    e.hitbox.x = random.randint(0, 650)
+                    score += 1
+                    break
 
-    window.fill([123,123,123])
-    window.blit(background, [1, 1])
-    window.blit(score_lbl, [0,0])
-    player.draw(window)
-    for e in enemies:
-        e.draw(window)
-    #малювати ракету
-    pygame.display.flip()
+        player.move()
 
-    fps.tick(60)
+        window.fill([123,123,123])
+        window.blit(background, [1, 1])
+        window.blit(score_lbl, [0,0])
+        player.draw(window)
+        for e in enemies:
+            e.draw(window)
+        #малювати ракету
+        pygame.display.flip()
 
+        fps.tick(60)
