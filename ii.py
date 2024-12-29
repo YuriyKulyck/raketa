@@ -2,6 +2,9 @@ import random
 
 import pygame
 
+from file_help import read_from_file, write_in_file
+
+
 #створити клас для ракет
 class Rocket:
     def __init__(self, filename, width, height, x, y, speed):
@@ -74,6 +77,7 @@ class Enemy:
 
 
 
+
 def game():
     pygame.init()
     def win_window(window):
@@ -100,7 +104,7 @@ def game():
 
     data =  read_from_file()
     score = data["score"]
-    win_in_file(data)
+    write_in_file(data)
     score = 0
     score_lbl = pygame.font.Font(None, 23).render("Score: " + str(score), True, [0,0,0])
     while True:
